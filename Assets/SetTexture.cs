@@ -20,4 +20,8 @@ public class SetTexture : MonoBehaviour
         Debug.Log(m);
         m.mainTexture = Static.texture;
     }
+
+    public void SendTexture(String s) {
+        Static.SendTexture(s);
+    }
 }
