@@ -1,5 +1,5 @@
 mergeInto(LibraryManager.library, {
-  OnMessage: function (str) {
+  SendUnityMessage: function (str) {
     if (window.sendUnityMessage) {
       window.sendUnityMessage(Pointer_stringify(str));
     }

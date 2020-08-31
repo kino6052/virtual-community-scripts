@@ -10,8 +10,8 @@ public class SetTexture : MonoBehaviour
     void Start()
     {
         CreateTextures();
-        Static.SendTexture(Data.image);
-        Static.SendTexture(Data.image);
+        SendTexture(Data.image);
+        SendTexture(Data.image);
     }
     
     public void CreateTextures() {
@@ -21,7 +21,7 @@ public class SetTexture : MonoBehaviour
         m.mainTexture = Static.texture;
     }
 
-    public void SendTexture(String s) {
+    public void SendTexture(string s) {
         Static.SendTexture(s);
     }
 }
