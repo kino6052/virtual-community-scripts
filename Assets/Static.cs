@@ -11,6 +11,8 @@ public class Static
 
     public static void SendTexture(string argsString) {
         string textureString = argsString;
+        bool isEmpty = textureString == "" || textureString == null;
+        if (isEmpty) textureString = Data.black;
         byte[] bTexture = System.Convert.FromBase64String(textureString);
         texture.LoadImage(bTexture);
     }
