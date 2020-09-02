@@ -13,7 +13,7 @@ public class Multiplayer : MonoBehaviour
 
     void Update()
     {
-        UpdatePositionById("1", "Ratto", Time.time, 1, 5, 0);
+        // UpdatePositionById("1", "Ratto", Time.time, 1, 5, 0);
     }
 
     public Transform CreatePlayer() {
@@ -31,7 +31,18 @@ public class Multiplayer : MonoBehaviour
         return p;
     }
 
-    public void UpdatePositionById(string id, string name, float x, float y, float z, float yAngle) {
+    private void UpdatePositionById(string input) {
+        string[] splitInput = input.Split(',');
+        if (splitInput.Length != 6) return;
+        var id = splitInput[0];
+        var name = splitInput[1];
+        var x = splitInput[2];
+        var y = splitInput[3];
+        var z = splitInput[4];
+        var yAngle = splitInput[5];
+        _UpdatePositionById(id, name, float.Parse(x), float.Parse(y), float.Parse(z), float.Parse(yAngle));
+    }
+    private void _UpdatePositionById(string id, string name, float x, float y, float z, float yAngle) {
         if (!positions.ContainsKey(id)) positions.Add(id, CreatePlayer());
         var transform = positions[id];
         TextMesh textMesh = transform.Find("Title")?.GetComponent<TextMesh>();
