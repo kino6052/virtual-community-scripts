@@ -13,7 +13,7 @@ public class Multiplayer : MonoBehaviour
 
     void Update()
     {
-        // UpdatePositionById("1", "Ratto", Time.time, 1, 5, 0);
+        _UpdatePositionById("1", "Ratto", Time.time, 1, 10, Time.time * 10);
     }
 
     public Transform CreatePlayer() {
@@ -49,11 +49,12 @@ public class Multiplayer : MonoBehaviour
         var me = GameObject.Find("Me")?.transform;
         textMesh.transform.LookAt(me);
         textMesh.text = name;
-        Vector3 targetPosition = new Vector3(x, y, z);
+        Vector3 targetPosition = new Vector3(x, y-1, z);
         if (transform == null) return;
-        float _yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, yAngle, ref angularVelocity, smoothTime);
+        // float _yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, yAngle, ref angularVelocity, smoothTime);
         var position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
-        position += Quaternion.Euler(0, _yAngle, 0) * Vector3.zero;
+        Quaternion _yAngle = Quaternion.Euler(0, yAngle, 0);
+        transform.rotation = Quaternion.Slerp(transform.rotation, _yAngle, smoothTime);
         transform.position = position;
     }
 }
