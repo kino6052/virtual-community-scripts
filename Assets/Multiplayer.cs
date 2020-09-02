@@ -16,19 +16,12 @@ public class Multiplayer : MonoBehaviour
         UpdatePositionById("1", "Ratto", Time.time, 1, 5, 0);
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        Debug.Log(player.transform);
-        Debug.Log("Length, " + positions.Count);
-    }
-
-    public Transform CreatePlayer(string name) {
+    public Transform CreatePlayer() {
         var p = Instantiate(player);
         GameObject text = new GameObject();
-        text.name = "Name";
+        text.name = "Title";
         TextMesh t = text.AddComponent<TextMesh>();
-        t.text = name;
+        t.text = "Player";
         t.fontSize = 12;
         t.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         t.transform.position = p.transform.position + new Vector3(0f, 1.9f, 0f);
@@ -39,21 +32,17 @@ public class Multiplayer : MonoBehaviour
     }
 
     public void UpdatePositionById(string id, string name, float x, float y, float z, float yAngle) {
-        if (!positions.ContainsKey(id)) positions.Add(id, CreatePlayer(name));
-
+        if (!positions.ContainsKey(id)) positions.Add(id, CreatePlayer());
         var transform = positions[id];
-
-        transform.Find("Name")?.transform.LookAt(GameObject.Find("Me")?.transform);
-
+        TextMesh textMesh = transform.Find("Title")?.GetComponent<TextMesh>();
+        var me = GameObject.Find("Me")?.transform;
+        textMesh.transform.LookAt(me);
+        textMesh.text = name;
         Vector3 targetPosition = new Vector3(x, y, z);
-
         if (transform == null) return;
-
         float _yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, yAngle, ref angularVelocity, smoothTime);
         var position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
-        
         position += Quaternion.Euler(0, _yAngle, 0) * Vector3.zero;
-
         transform.position = position;
     }
 }

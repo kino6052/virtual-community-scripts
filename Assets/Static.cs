@@ -19,6 +19,10 @@ public class Static
 
     public static void ChangeChannel(string channel) {
         Debug.Log(channel);
-        SendUnityMessage(channel);
+        SendUnityMessage($"channel,{channel}");
+    }
+
+    public static void SendPosition(float x, float y, float z, float yAngle) {
+        SendUnityMessage($"position,{x},{y},{z},{yAngle}");
     }
 }
