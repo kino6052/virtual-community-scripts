@@ -5,7 +5,9 @@ using UnityEngine;
 public class Stage : MonoBehaviour
 {
     public Material[] materialArrayGlow;
+    public Material[] materialArrayScreen;
     public Material materialPodium;
+    public Font font;
     public float unit = 0.1f;
     public float scaleUnit = 0.1f;
     public float thickness = 1.5f;
@@ -14,7 +16,7 @@ public class Stage : MonoBehaviour
     void Start()
     {
         GameObject stage = CreateStage();
-        stage.transform.position += new Vector3(0f, 25*unit, 0f);
+        stage.transform.position += new Vector3(0f, 10*unit, 0f);
     }
 
     // Update is called once per frame
@@ -65,31 +67,49 @@ public class Stage : MonoBehaviour
         }
         GameObject sideScreens = CreateSideScreens();
         GameObject podium = CreatePodium();
-        sideScreens.transform.parent = empty.transform;
+        GameObject screen01 = CreateScreen(1, materialArrayScreen[0]);
+        screen01.transform.position = new Vector3(0f, 12*unit, 90*unit);
+        screen01.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        GameObject text = CreateText(materialArrayGlow[0]);
+        text.transform.position = new Vector3(0f, -5*unit, 90*unit);
+        GameObject spotLightGroup = CreateSpotLightGroup();
+        sideScreens.transform.parent = empty.transform; 
         podium.transform.parent = empty.transform;
+        screen01.transform.parent = empty.transform;
+        text.transform.parent = empty.transform;
+        spotLightGroup.transform.parent = empty.transform.parent;
         return empty;
     }
 
     GameObject CreateSideScreens() {
         GameObject empty = new GameObject("Side Screens");
         GameObject square01 = CreateSquare(materialArrayGlow[0]);
-        square01.transform.position += new Vector3(100*unit, 0f, -50*unit);
+        GameObject screen01 = CreateScreen(2, materialArrayScreen[1]);
+        square01.transform.position = new Vector3(100*unit, 0f, -50*unit);
+        screen01.transform.position = new Vector3(100*unit, 20*unit, -50*unit);
+        screen01.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         square01.transform.rotation = Quaternion.Euler(0f, 45f, 0f);
+        screen01.transform.rotation = Quaternion.Euler(0f, 45f, 0f);
         square01.transform.parent = empty.transform;
+        screen01.transform.parent = empty.transform;
         GameObject square02 = CreateSquare(materialArrayGlow[0]);
-        square02.transform.position += new Vector3(-100*unit, 0f, -50*unit);
+        GameObject screen02 = CreateScreen(3, materialArrayScreen[1]);
+        square02.transform.position = new Vector3(-100*unit, 0f, -50*unit);
+        screen02.transform.position = new Vector3(-100*unit, 20*unit, -50*unit);
+        screen02.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         square02.transform.rotation = Quaternion.Euler(0f, -45f, 0f);
+        screen02.transform.rotation = Quaternion.Euler(0f, -45f, 0f);
         square02.transform.parent = empty.transform;
+        screen02.transform.parent = empty.transform;
         return empty;
     }
-
 
     GameObject CreateLight() {
         GameObject empty = new GameObject("Light");
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        sphere.transform.localScale = new Vector3(2*unit, 2*unit, 2*unit);
         Light lightComp = empty.AddComponent<Light>();
-        lightComp.intensity = 1f;
+        lightComp.intensity = 3f;
         sphere.transform.parent = empty.transform;
         MeshRenderer renderer = sphere.GetComponent<MeshRenderer>();
         renderer.material = materialArrayGlow[0]; 
@@ -120,7 +140,53 @@ public class Stage : MonoBehaviour
       cylinder.transform.parent = empty.transform;
       GameObject lights = CreateLights(5);
       lights.transform.parent = empty.transform;
-      empty.transform.position = new Vector3(0f, -25*unit, -50*unit);
+      empty.transform.position = new Vector3(0f, -10*unit, -50*unit);
       return empty;
+    }
+
+    GameObject CreateScreen(int num, Material m) {
+        GameObject empty = new GameObject(num.ToString());
+        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        MeshRenderer renderer = plane.GetComponent<MeshRenderer>();
+        renderer.material = m;
+        plane.transform.Rotate(90f, 180f, 0f);
+        plane.transform.localScale = new Vector3(1.77f, 1f, 1f);
+        plane.transform.parent = empty.transform;
+        return empty;
+    }
+
+    GameObject CreateText(Material m) {
+        GameObject empty = new GameObject("Text");
+        TextMesh t = empty.AddComponent<TextMesh>();
+        t.text = "AED University";
+        t.fontSize = 38;
+        t.anchor = TextAnchor.MiddleCenter;
+        t.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+        t.font = font;
+        return empty;
+    }
+
+    GameObject CreateSpotLight() {
+        GameObject empty = new GameObject("Spot Light");
+        Light lightComp = empty.AddComponent<Light>();
+        lightComp.type = LightType.Spot;
+        lightComp.intensity = 15f;
+        return empty;
+    }
+    GameObject CreateSpotLightGroup() {
+        GameObject empty = new GameObject("Spot Light Group");
+        GameObject light01 = CreateSpotLight();
+        light01.transform.Rotate(120f, 90f, 0f);
+        light01.transform.position = new Vector3(20*unit, 60*unit, -50*unit);
+        light01.transform.parent = empty.transform;
+        GameObject light02 = CreateSpotLight();
+        light02.transform.Rotate(120f, -90f, 0f);
+        light02.transform.position = new Vector3(-20*unit, 60*unit, -50*unit);
+        light02.transform.parent = empty.transform;
+        // GameObject light03 = CreateSpotLight();
+        // light03.transform.Rotate(120f, 0f, 0f);
+        // light03.transform.position = new Vector3(0*unit, 60*unit, -30*unit);
+        // light03.transform.parent = empty.transform;
+        return empty;
     }
 }

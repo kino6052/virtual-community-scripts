@@ -11,7 +11,7 @@ public class SetTexture : MonoBehaviour
     {
         CreateTextures();
         SendTexture(Data.image);
-        SendTexture("");
+        // SendTexture("");
     }
     
     public void CreateTextures() {
