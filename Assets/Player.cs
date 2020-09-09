@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     float y = 0.0f;
     float z = 0.0f;
     float yAngle = 0.0f;
+    int counter = 100;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,15 +18,30 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var _x = transform.position.x;
-        var _y = transform.position.y;
-        var _z = transform.position.z;
-        var _yAngle = transform.eulerAngles.y;
+        // counter++;
+        // if (counter < 10) return;
+        _Update();
+        // counter=0;
+    }
+    void _Update() {
+        Transform pivot = transform.Find("Pivot")?.GetComponent<Transform>();
+        var controller = transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
+        var _x = pivot.position.x;
+        var _y = pivot.position.y;
+        var _z = pivot.position.z;
+        var _yAngle = pivot.eulerAngles.y;
         if (_x == x && _y == y && _z == z && _yAngle == yAngle) return;
         x = _x;
         y = _y;
         z = _z;
         yAngle = _yAngle;
-        Static.SendPosition(_x, _y, _z, _yAngle);
+        PositionStructure structure = new PositionStructure();
+        structure.x = x;
+        structure.y = y;
+        structure.z = z;
+        structure.yAngle = yAngle;
+        structure.isRunning = !controller.m_IsWalking;
+        structure.isJumping = false;
+        Static.SendPositionDebug(structure);
     }
 }

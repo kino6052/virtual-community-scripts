@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 
+public class PositionStructure {
+    public float x = 0f;
+    public float y = 0f;
+    public float z = 0f;
+    public float yAngle = 0f;
+    public bool isJumping = false;
+    public bool isRunning = false;
+}
 public static class Static
 {
     [DllImport("__Internal")]
@@ -24,5 +32,9 @@ public static class Static
 
     public static void SendPosition(float x, float y, float z, float yAngle) {
         SendUnityMessage($"position,{x},{y},{z},{yAngle}");
+    }
+    public static void SendPositionDebug(PositionStructure structure) {
+        structure.z += 2f;
+        MultiplayerStatic.UpdatePositionById("1", "Ratto", structure);
     }
 }

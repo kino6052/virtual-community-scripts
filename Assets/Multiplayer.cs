@@ -17,10 +17,10 @@ public class Multiplayer : MonoBehaviour
     void Update()
     {
         UpdateByFrame("1");
-        counter++;
-        if (counter < 100) return;
-        MultiplayerStatic.UpdatePositionById("1", "Ratto", 0f, 0f, Time.time, Time.time * 100);
-        counter = 0;
+        // counter++;
+        // if (counter < 100) return;
+        // MultiplayerStatic.UpdatePositionById("1", "Ratto", 0f, 0f, Time.time, Time.time * 100);
+        // counter = 0;
     }
     private void UpdatePositionById(string input) {
         string[] splitInput = input.Split(',');
@@ -31,7 +31,7 @@ public class Multiplayer : MonoBehaviour
         var y = splitInput[3];
         var z = splitInput[4];
         var yAngle = splitInput[5];
-        MultiplayerStatic.UpdatePositionById(id, name, float.Parse(x), float.Parse(y), float.Parse(z), float.Parse(yAngle));
+        // MultiplayerStatic.UpdatePositionById(id, name, float.Parse(x), float.Parse(y), float.Parse(z), float.Parse(yAngle));
     }
     private void UpdateByFrame(string id) {
         Target target = MultiplayerStatic.GetTargetById(id);

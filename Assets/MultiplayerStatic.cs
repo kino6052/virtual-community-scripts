@@ -7,6 +7,8 @@ public class Target {
   public Vector3 velocity = new Vector3();
   public float angularVelocity = 0f;
   public float yAngle = 0f;
+  public bool isRunning = false;
+  public bool isJumping = false;
 } 
 
 public static class MultiplayerStatic
@@ -16,11 +18,13 @@ public static class MultiplayerStatic
     public static Transform player;
     public static Dictionary<string, Transform> transforms = new Dictionary<string, Transform>();
     public static Dictionary<string, Target> targets = new Dictionary<string, Target>();
-    public static void UpdateTargetById(string id, Vector3 position, float yAngle) {
+    public static void UpdateTargetById(string id, PositionStructure structure) {
       if (!targets.ContainsKey(id)) targets[id] = new Target();
       Target target = targets[id];
-      target.position = position;
-      target.yAngle = yAngle; 
+      target.position = new Vector3(structure.x, structure.y, structure.z);
+      target.yAngle = structure.yAngle; 
+      target.isJumping = !target.isJumping && structure.isJumping;
+      target.isRunning = structure.isRunning; 
     }
     public static Transform CreatePlayer() {
       var p = DInstantiate(player);
@@ -36,15 +40,17 @@ public static class MultiplayerStatic
       text.transform.parent = p;
       return p;
     }
-    public static void UpdatePositionById(string id, string name, float x, float y, float z, float yAngle) {
+    public static void UpdatePositionById(string id, string name, PositionStructure structure) {
       if (!transforms.ContainsKey(id)) transforms.Add(id, CreatePlayer());
-      var transform = transforms[id];
-      TextMesh textMesh = transform.Find("Title")?.GetComponent<TextMesh>();
+      var t = transforms[id];
+      TextMesh textMesh = t.Find("Title")?.GetComponent<TextMesh>();
+      textMesh.text = name;
+      UpdateTargetById(id, structure);
+    }
+    public static void UpdateTextPosition(Transform t) {
+      TextMesh textMesh = t.Find("Title")?.GetComponent<TextMesh>();
       var me = GameObject.Find("Me")?.transform;
       textMesh.transform.LookAt(me);
-      textMesh.text = name;
-      Vector3 targetPosition = new Vector3(x, y, z);
-      UpdateTargetById(id, targetPosition, yAngle);
     }
     public static Target GetTargetById(string id) {
       if (!targets.ContainsKey(id)) return null;
@@ -55,13 +61,10 @@ public static class MultiplayerStatic
       return transforms[id];
     }
     public static void Animate(Transform transform, Target target) {
-        float magnitudeRun = 5f;
-        float magnitudeStand = 0.2f;
-        float magintudeJump = 0.5f;
         Actions actions = transform.GetComponent<Actions> ();
-        bool isJumping = target.position.y > magintudeJump;
-        bool isRunning = target.velocity.magnitude > magnitudeRun;
-        bool isWalking = target.velocity.magnitude < magnitudeRun && target.velocity.magnitude > magnitudeStand;
+        bool isJumping = target.isJumping;
+        bool isRunning = target.isRunning;
+        bool isWalking = target.velocity.magnitude > 0.2f && !isRunning;
         bool isStanding = !isRunning && !isWalking;
         if (isJumping) actions.SendMessage("Jump", SendMessageOptions.DontRequireReceiver);
         else if (isRunning) actions.SendMessage("Run", SendMessageOptions.DontRequireReceiver);
