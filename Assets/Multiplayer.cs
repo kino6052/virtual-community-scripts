@@ -2,35 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[RequireComponent (typeof (Transform))]
 public class Multiplayer : MonoBehaviour
 {
     public Transform player;
-    public float smoothTime = 0.3F;
-    private Vector3 velocity = Vector3.zero;
-    private float angularVelocity = 0.0f;
-    private Dictionary<string, Transform> positions = new Dictionary<string, Transform>(); 
-
+    public float smoothTime = 0.01f;
+    private int counter = 0;
+    private Vector3 target = new Vector3();
+    
+    void Start() {
+        MultiplayerStatic.player = player;
+        MultiplayerStatic.DInstantiate = Instantiate;
+    }
     void Update()
     {
-        _UpdatePositionById("1", "Ratto", Time.time, 1, 10, Time.time * 10);
+        UpdateByFrame("1");
+        counter++;
+        if (counter < 100) return;
+        MultiplayerStatic.UpdatePositionById("1", "Ratto", 0f, 0f, Time.time, Time.time * 100);
+        counter = 0;
     }
-
-    public Transform CreatePlayer() {
-        var p = Instantiate(player);
-        GameObject text = new GameObject();
-        text.name = "Title";
-        TextMesh t = text.AddComponent<TextMesh>();
-        t.text = "Player";
-        t.fontSize = 12;
-        t.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-        t.transform.position = p.transform.position + new Vector3(0f, 1.9f, 0f);
-        t.color = new Color(255, 0, 0);
-        t.alignment = TextAlignment.Center;
-        text.transform.parent = p;
-        return p;
-    }
-
     private void UpdatePositionById(string input) {
         string[] splitInput = input.Split(',');
         if (splitInput.Length != 6) return;
@@ -40,21 +31,16 @@ public class Multiplayer : MonoBehaviour
         var y = splitInput[3];
         var z = splitInput[4];
         var yAngle = splitInput[5];
-        _UpdatePositionById(id, name, float.Parse(x), float.Parse(y), float.Parse(z), float.Parse(yAngle));
+        MultiplayerStatic.UpdatePositionById(id, name, float.Parse(x), float.Parse(y), float.Parse(z), float.Parse(yAngle));
     }
-    private void _UpdatePositionById(string id, string name, float x, float y, float z, float yAngle) {
-        if (!positions.ContainsKey(id)) positions.Add(id, CreatePlayer());
-        var transform = positions[id];
-        TextMesh textMesh = transform.Find("Title")?.GetComponent<TextMesh>();
-        var me = GameObject.Find("Me")?.transform;
-        textMesh.transform.LookAt(me);
-        textMesh.text = name;
-        Vector3 targetPosition = new Vector3(x, y-1, z);
-        if (transform == null) return;
-        // float _yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, yAngle, ref angularVelocity, smoothTime);
-        var position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
-        Quaternion _yAngle = Quaternion.Euler(0, yAngle, 0);
-        transform.rotation = Quaternion.Slerp(transform.rotation, _yAngle, smoothTime);
-        transform.position = position;
+    private void UpdateByFrame(string id) {
+        Target target = MultiplayerStatic.GetTargetById(id);
+        Transform transform = MultiplayerStatic.GetTransformById(id);
+        if (target == null || transform == null) return;
+        MultiplayerStatic.Animate(transform, target);
+        var updatedPosition = Vector3.SmoothDamp(transform.position, target.position, ref target.velocity, smoothTime);
+        float updatedYAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target.yAngle, ref target.angularVelocity, smoothTime);
+        transform.rotation = Quaternion.Euler(0, updatedYAngle, 0);
+        transform.position = updatedPosition;
     }
 }

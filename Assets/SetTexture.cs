@@ -10,7 +10,7 @@ public class SetTexture : MonoBehaviour
     void Start()
     {
         CreateTextures();
-        SendTexture(Data.image);
+        // SendTexture(Data.image);
         // SendTexture("");
     }
     

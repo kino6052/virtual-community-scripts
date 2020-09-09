@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 
-public class Static
+public static class Static
 {
     [DllImport("__Internal")]
     private static extern void SendUnityMessage(string str);
