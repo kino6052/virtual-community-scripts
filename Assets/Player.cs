@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     float y = 0.0f;
     float z = 0.0f;
     float yAngle = 0.0f;
-    int counter = 100;
+    string name = "";
     // Start is called before the first frame update
     void Start()
     {
@@ -18,14 +18,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // counter++;
-        // if (counter < 10) return;
-        _Update();
-        // counter=0;
+        UpdateName();
+        UpdatePosition();
+        SendData();
     }
-    void _Update() {
+    void UpdatePosition() {
         Transform pivot = transform.Find("Pivot")?.GetComponent<Transform>();
-        var controller = transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
         var _x = pivot.position.x;
         var _y = pivot.position.y;
         var _z = pivot.position.z;
@@ -35,6 +33,12 @@ public class Player : MonoBehaviour
         y = _y;
         z = _z;
         yAngle = _yAngle;
+    }
+    void UpdateName() {
+        name = UIStatic.name;
+    }
+    void SendData() {
+        var controller = transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
         PositionStructure structure = new PositionStructure();
         structure.x = x;
         structure.y = y;
@@ -42,6 +46,6 @@ public class Player : MonoBehaviour
         structure.yAngle = yAngle;
         structure.isRunning = !controller.m_IsWalking;
         structure.isJumping = false;
-        Static.SendPositionDebug(structure);
+        Static.SendPositionDebug(name, structure);
     }
 }

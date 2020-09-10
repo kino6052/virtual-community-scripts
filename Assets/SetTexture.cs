@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SetTexture : MonoBehaviour
 {
-    public Material m;
+    public Material material;
 
     // Start is called before the first frame update
     void Start()
@@ -15,13 +15,8 @@ public class SetTexture : MonoBehaviour
     }
     
     public void CreateTextures() {
-        if (m == null) return;
-        Static.texture = new Texture2D(512, 512);
-        Debug.Log(m);
-        m.mainTexture = Static.texture;
-    }
-
-    public void SendTexture(string s) {
-        Static.SendTexture(s);
+        if (material == null) return;
+        Static.texture = new Texture2D(1024, 1024);
+        material.mainTexture = Static.texture;
     }
 }
