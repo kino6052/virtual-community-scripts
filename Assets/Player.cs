@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-    float yAngle = 0.0f;
+    PositionStructure position = new PositionStructure();
     string name = "";
     // Start is called before the first frame update
     void Start()
@@ -19,33 +16,32 @@ public class Player : MonoBehaviour
     void Update()
     {
         UpdateName();
-        UpdatePosition();
-        SendData();
+        var lastPosition = UpdatePosition();
+        SendData(lastPosition);
     }
-    void UpdatePosition() {
+    PositionStructure UpdatePosition() {
+        var controller = transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
         Transform pivot = transform.Find("Pivot")?.GetComponent<Transform>();
-        var _x = pivot.position.x;
-        var _y = pivot.position.y;
-        var _z = pivot.position.z;
-        var _yAngle = pivot.eulerAngles.y;
-        if (_x == x && _y == y && _z == z && _yAngle == yAngle) return;
-        x = _x;
-        y = _y;
-        z = _z;
-        yAngle = _yAngle;
+        var lastPosition = position;
+        position = new PositionStructure();
+        position.x = pivot.position.x;
+        position.y = pivot.position.y > 0 ? pivot.position.y : 0;
+        position.z = pivot.position.z;
+        position.yAngle = pivot.eulerAngles.y;
+        position.isRunning = !controller.m_IsWalking;
+        position.isJumping = false;
+        return lastPosition;
     }
     void UpdateName() {
         name = UIStatic.name;
     }
-    void SendData() {
-        var controller = transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
-        PositionStructure structure = new PositionStructure();
-        structure.x = x;
-        structure.y = y;
-        structure.z = z;
-        structure.yAngle = yAngle;
-        structure.isRunning = !controller.m_IsWalking;
-        structure.isJumping = false;
-        Static.SendPositionDebug(name, structure);
+    void SendData(PositionStructure lastPosition) {
+        if (
+            lastPosition.x == position.x &&
+            lastPosition.y == position.y &&
+            lastPosition.z == position.z &&
+            lastPosition.yAngle == position.yAngle
+        ) return;
+        Static.OnPositionChange(name, position);
     }
 }

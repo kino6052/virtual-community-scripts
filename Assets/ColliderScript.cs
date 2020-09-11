@@ -9,13 +9,13 @@ public class ColliderScript : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // Debug.Log("Enter, " + other.name);
-        Static.ChangeChannel(screen.name);
+        // Static.ChangeChannel(screen.name);
     }
 
     //When the Primitive exits the collision, it will change Color
     private void OnTriggerExit(Collider other)
     {
         // Debug.Log("Exit, " + other.name);
-        Static.ChangeChannel(null);
+        // Static.ChangeChannel(null);
     }
 }

@@ -22,6 +22,7 @@ public class MessageWithId: Message {
     public MessageWithId(string t): base(t) {}
 }
 
+[System.Serializable]
 public class StoredMessage: Message {
     public string message = "";
     public StoredMessage(string s): base("") {
@@ -31,16 +32,20 @@ public class StoredMessage: Message {
     }
 }
 
+[System.Serializable]
 public class PositionMessage: MessageWithId {
     public PositionStructure position;
-    public PositionMessage(string t): base(t) {}
+    public string name;
+    public PositionMessage(): base(MessageType.Position) {}
 }
 
+[System.Serializable]
 public class ImageMessage: MessageWithId {
     public string image;
     public ImageMessage(string t): base(t) {}
 }
 
+[System.Serializable]
 public class PositionStructure {
     public float x = 0f;
     public float y = 0f;
@@ -56,7 +61,13 @@ public static class Static
     public static Texture2D texture;
     public static byte[] bTexture = new byte[]{};
     public static string base64Image;
+    public static StoredMessage message = new StoredMessage(""); 
 
+    // Entry Point
+    public static void OnMessage(string s) {
+        message = new StoredMessage(s);
+    }
+    // Texture Related
     public static void SendTexture(string argsString) {
         string textureString = argsString;
         bool isEmpty = textureString == "" || textureString == null;
@@ -67,13 +78,47 @@ public static class Static
         if (!texture) return;
         texture.LoadImage(bTexture);
     }
-    public static void ChangeChannel(string channel) {
-        Debug.Log(channel);
-        SendUnityMessage($"channel,{channel}");
+    // Listeners
+    public static void OnPresentListener() {
+        if (!UIStatic.hasClickedPresent) return;
+        UIStatic.hasClickedPresent = false;
+        string json = JsonUtility.ToJson(new Message(MessageType.Present));
+		Debug.Log(json);
+		Static.SendUnityMessage(json);
     }
-    public static void SendPosition(float x, float y, float z, float yAngle) {
-        SendUnityMessage($"position,{x},{y},{z},{yAngle}");
+
+    public static void OnFullScreenListener() {
+        if (!UIStatic.hasClickedFullScreen) return;
+        UIStatic.hasClickedFullScreen = false;
+        string json = JsonUtility.ToJson(new Message(MessageType.FullScreen));
+		Debug.Log(json);
+		Static.SendUnityMessage(json);
     }
+    public static void OnPositionChange(string name, PositionStructure position) {
+        var positionMessage = new PositionMessage();
+        positionMessage.name = name;
+        positionMessage.position = position;
+        string json = JsonUtility.ToJson(positionMessage);
+        Debug.Log(json);
+        Static.SendUnityMessage(json);
+    }
+    public static void OnPositionListener() {
+        if (message == null) return;
+        if (message.type != MessageType.Position) return;
+        var m = message;
+        message = null;
+        PositionMessage positionMessage = JsonUtility.FromJson<PositionMessage>(m.message);
+        MultiplayerStatic.UpdatePositionById(positionMessage.id, positionMessage.name, positionMessage.position);
+    }
+    public static void OnImageDataListener() {
+        if (message == null) return;
+        if (message.type != MessageType.ImageData) return;
+        var m = message;
+        message = null;
+        ImageMessage imageMessage = JsonUtility.FromJson<ImageMessage>(m.message);
+        Static.base64Image = imageMessage.image;
+    }
+    // Debug
     public static void SendPositionDebug(string name, PositionStructure structure) {
         structure.z += 2f;
         MultiplayerStatic.UpdatePositionById("1", "Ratto", structure);
