@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CommunicationManager : MonoBehaviour
 {
-    public StoredMessage message; 
+    public StoredMessage message = new StoredMessage(""); 
     // Start is called before the first frame update
     void Start()
     {
@@ -24,21 +24,23 @@ public class CommunicationManager : MonoBehaviour
 
     // Receive
     void OnMessage(string s) {
-        message = StoredMessage(s);
+        message = new StoredMessage(s);
     }
 
     void OnPositionListener() {
+        if (message == null) return;
         if (message.type != MessageType.Position) return;
         var m = message;
         message = null;
-        PositionMessage positionMessage = JsonUtility.FromJson<PositionMessage>(m);
+        PositionMessage positionMessage = JsonUtility.FromJson<PositionMessage>(m.message);
         MultiplayerStatic.UpdateTargetById(positionMessage.id, positionMessage.position);
     }
     void OnImageDataListener() {
+        if (message == null) return;
         if (message.type != MessageType.ImageData) return;
         var m = message;
         message = null;
-        ImageMessage imageMessage = JsonUtility.FromJson<ImageMessage>(m);
+        ImageMessage imageMessage = JsonUtility.FromJson<ImageMessage>(m.message);
         Static.base64Image = imageMessage.image;
     }
 

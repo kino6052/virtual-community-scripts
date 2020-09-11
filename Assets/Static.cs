@@ -19,23 +19,26 @@ public class Message {
 
 public class MessageWithId: Message {
     public string id;
+    public MessageWithId(string t): base(t) {}
 }
 
 public class StoredMessage: Message {
     public string message = "";
-    public StoredMessage(string s) {
+    public StoredMessage(string s): base("") {
         Message m = JsonUtility.FromJson<Message>(s);
-        type = m.type;
+        type = m?.type;
         message = s;
     }
 }
 
 public class PositionMessage: MessageWithId {
     public PositionStructure position;
+    public PositionMessage(string t): base(t) {}
 }
 
 public class ImageMessage: MessageWithId {
     public string image;
+    public ImageMessage(string t): base(t) {}
 }
 
 public class PositionStructure {
@@ -51,13 +54,17 @@ public static class Static
     [DllImport("__Internal")]
     public static extern void SendUnityMessage(string str);
     public static Texture2D texture;
+    public static byte[] bTexture = new byte[]{};
     public static string base64Image;
 
     public static void SendTexture(string argsString) {
         string textureString = argsString;
         bool isEmpty = textureString == "" || textureString == null;
         if (isEmpty) textureString = Data.black;
-        byte[] bTexture = System.Convert.FromBase64String(textureString);
+        System.Convert.FromBase64String(textureString);
+    }
+    public static void UpdateTexture() {
+        if (!texture) return;
         texture.LoadImage(bTexture);
     }
     public static void ChangeChannel(string channel) {
