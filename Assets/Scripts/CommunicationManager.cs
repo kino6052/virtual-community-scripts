@@ -14,4 +14,8 @@ public class CommunicationManager : MonoBehaviour
         Static.OnPresentListener();
         Static.OnFullScreenListener();
     }
+
+    public void OnMessage(string s) {
+        Static.OnMessage(s);
+    }
 }

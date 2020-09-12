@@ -8,6 +8,7 @@ public class MessageType
     public static string FullScreen   { get { return "fullscreen"; } }
     public static string Position   { get { return "position"; } }
     public static string ImageData   { get { return "image"; } }
+    public static string Start   { get { return "start"; } }
 }
 
 public class Message {
@@ -79,14 +80,16 @@ public static class Static
         texture.LoadImage(bTexture);
     }
     // Listeners
+    public static void OnStart() {
+        string json = JsonUtility.ToJson(new Message(MessageType.Start));
+        Static.SendUnityMessage(json);
+    }
     public static void OnPresentListener() {
         if (!UIStatic.hasClickedPresent) return;
         UIStatic.hasClickedPresent = false;
         string json = JsonUtility.ToJson(new Message(MessageType.Present));
-		Debug.Log(json);
 		Static.SendUnityMessage(json);
     }
-
     public static void OnFullScreenListener() {
         if (!UIStatic.hasClickedFullScreen) return;
         UIStatic.hasClickedFullScreen = false;
@@ -99,7 +102,6 @@ public static class Static
         positionMessage.name = name;
         positionMessage.position = position;
         string json = JsonUtility.ToJson(positionMessage);
-        Debug.Log(json);
         Static.SendUnityMessage(json);
     }
     public static void OnPositionListener() {
@@ -117,8 +119,7 @@ public static class Static
         message = null;
         ImageMessage imageMessage = JsonUtility.FromJson<ImageMessage>(m.message);
         Static.base64Image = imageMessage.image;
-    }
-    // Debug
+    }    // Debug
     public static void SendPositionDebug(string name, PositionStructure structure) {
         structure.z += 2f;
         MultiplayerStatic.UpdatePositionById("1", "Ratto", structure);
