@@ -60,8 +60,8 @@ public static class Static
     [DllImport("__Internal")]
     public static extern void SendUnityMessage(string str);
     public static Texture2D texture;
-    public static byte[] bTexture = new byte[]{};
-    public static string base64Image;
+    public static byte[] bTexture = System.Convert.FromBase64String(Data.black);
+    public static string base64Image = Data.black;
     public static StoredMessage message = new StoredMessage(""); 
 
     // Entry Point
@@ -73,7 +73,7 @@ public static class Static
         string textureString = argsString;
         bool isEmpty = textureString == "" || textureString == null;
         if (isEmpty) textureString = Data.black;
-        System.Convert.FromBase64String(textureString);
+        bTexture = System.Convert.FromBase64String(textureString);
     }
     public static void UpdateTexture() {
         if (!texture) return;

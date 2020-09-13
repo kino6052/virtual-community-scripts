@@ -5,17 +5,11 @@ using UnityEngine;
 
 public class ThreadExample : MonoBehaviour
 {
-    Thread ChildThread = null;
-    void MainLoop() {
-        while (true) {
-            string prev = "";
-            if (Static.base64Image == prev) continue;
-            prev = Static.base64Image;
-            Static.SendTexture(Static.base64Image);
-        }
-    }
-    void Awake(){
-        ChildThread = new Thread(MainLoop);
-        ChildThread.Start();
+    string prev = "";
+    // Thread ChildThread = null;
+    void Update() {
+        if (Static.base64Image == prev) return;
+        prev = Static.base64Image;
+        Static.SendTexture(Static.base64Image);
     }
 }
