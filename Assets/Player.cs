@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Static.OnStart();    
+        Static.OnStart();
+        StartCoroutine("Pulse");
     }
 
     // Update is called once per frame
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour
         UpdateName();
         var lastPosition = UpdatePosition();
         SendData(lastPosition);
+
     }
     PositionStructure UpdatePosition() {
         var controller = transform.GetComponent<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>();
@@ -31,6 +33,10 @@ public class Player : MonoBehaviour
         position.isRunning = !controller.m_IsWalking;
         position.isJumping = false;
         return lastPosition;
+    }
+    IEnumerator Pulse() {
+        yield return new WaitForSeconds(0.5f);
+        Static.OnPositionChange(name, position);
     }
     void UpdateName() {
         name = UIStatic.name;
