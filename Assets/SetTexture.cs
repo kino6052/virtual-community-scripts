@@ -5,6 +5,7 @@ using UnityEngine;
 public class SetTexture : MonoBehaviour
 {
     public Material material;
+    string prev = "";
 
     // Start is called before the first frame update
     void Start()
@@ -13,6 +14,10 @@ public class SetTexture : MonoBehaviour
     }
 
     void Update() {
+        Static.OnProceed();
+        if (Static.base64Image == prev) return;
+        prev = Static.base64Image;
+        Static.SendTexture(Static.base64Image);
         Static.UpdateTexture();
     }
     

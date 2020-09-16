@@ -9,6 +9,7 @@ public class MessageType
     public static string Position   { get { return "position"; } }
     public static string ImageData   { get { return "image"; } }
     public static string Start   { get { return "start"; } }
+    public static string Proceed { get { return "proceed"; } }
 }
 
 public class Message {
@@ -82,6 +83,10 @@ public static class Static
     // Listeners
     public static void OnStart() {
         string json = JsonUtility.ToJson(new Message(MessageType.Start));
+        Static.SendUnityMessage(json);
+    }
+    public static void OnProceed() {
+        string json = JsonUtility.ToJson(new Message(MessageType.Proceed));
         Static.SendUnityMessage(json);
     }
     public static void OnPresentListener() {
