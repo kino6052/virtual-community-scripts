@@ -88,7 +88,7 @@ public static class MultiplayerStatic
       transforms.Remove(id);
       targets.Remove(id);
       TTLDictionary.Remove(id);
-      Destroy(transform.parent);
+      DDestroy(transform.parent);
     }
     public static void UpdateByFrame(string id) {
         var ttl = ReduceTTL(id);
