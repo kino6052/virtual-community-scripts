@@ -84,14 +84,17 @@ public static class MultiplayerStatic
         else if (isWalking) actions.SendMessage("Walk", SendMessageOptions.DontRequireReceiver);
         else if (isStanding) actions.SendMessage("Stay", SendMessageOptions.DontRequireReceiver);
     }
+    public static void RemovePlayer(string id, Transform transform) {
+      transforms.Remove(id);
+      targets.Remove(id);
+      TTLDictionary.Remove(id);
+      Destroy(transform.parent);
+    }
     public static void UpdateByFrame(string id) {
         var ttl = ReduceTTL(id);
         Target target = MultiplayerStatic.GetTargetById(id);
         Transform transform = MultiplayerStatic.GetTransformById(id);
-        if (ttl == 0) {
-          transforms.Remove(id);
-          DDestroy(transform);
-        }
+        if (ttl == 0) RemovePlayer(id, transform);
         if (target == null || transform == null) return;
         MultiplayerStatic.Animate(transform, target);
         MultiplayerStatic.UpdateTextPosition(transform);
@@ -100,7 +103,6 @@ public static class MultiplayerStatic
         transform.rotation = Quaternion.Euler(0, updatedYAngle, 0);
         transform.position = updatedPosition;
     }
-
     private static int ReduceTTL(string id) {
         var ttl = MultiplayerStatic.GetTTLById(id);
         if (ttl == -1) return -1;
