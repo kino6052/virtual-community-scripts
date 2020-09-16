@@ -35,8 +35,10 @@ public class Player : MonoBehaviour
         return lastPosition;
     }
     IEnumerator Pulse() {
-        yield return new WaitForSeconds(0.5f);
-        Static.OnPositionChange(name, position);
+        while (true) {
+            yield return new WaitForSeconds(0.5f);
+            Static.OnPositionChange(name, position);
+        }
     }
     void UpdateName() {
         name = UIStatic.name;
